@@ -32,7 +32,6 @@ function App() {
       <div style={{display:'flex', flexDirection:'column', alignItems: 'center' }}>
         <div style={{ width: '68%' }}>
           <TabHeader />
-          <TableContent />
         </div>
       </div>
 
