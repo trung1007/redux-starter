@@ -1,18 +1,14 @@
-import reduxLogo from '/redux.svg'
+
 // import './App.css'
-import { decrement, increment, reset } from './redux/counter/counter.slide'
 import { useAppDispatch, useAppSelector } from './redux/hooks'
-import { useSelector } from 'react-redux'
-import { RootState } from '@reduxjs/toolkit/query'
 import NavbarHeader from './components/navbar'
 import TabHeader from './components/tab'
-import TableContent from './components/table'
 
 function App() {
 
-  const count = useAppSelector((state) => state.counter)
-  // useSelector return an object represented a state
-  const dispatch = useAppDispatch()
+  // const count = useAppSelector((state) => state.counter)
+  // // useSelector return an object represented a state
+  // const dispatch = useAppDispatch()
 
   return (
     <>
