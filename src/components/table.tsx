@@ -1,17 +1,12 @@
 import { useEffect, useState } from 'react';
 import Table from 'react-bootstrap/Table';
-import { useAppDispatch } from '../redux/hooks';
+import { useAppDispatch, useAppSelector } from '../redux/hooks';
 import { fetchListUsers } from '../redux/user/user.slice';
 
-interface User {
-    id: number;
-    name: string,
-    age: number;
-    email: string
-}
+
 
 const TableContent = () => {
-    const [users, setUsers] = useState<User[]>([]);
+    
 
     // const fetchUsers = async () => {
     //     const res = await fetch('http://localhost:3000/users')
@@ -23,6 +18,7 @@ const TableContent = () => {
     //     fetchUsers()
     // }, [])
     const dispatch = useAppDispatch()
+    const users = useAppSelector(state => state?.user?.listUsers)
     useEffect(()=>{
         dispatch(fetchListUsers())
     },[])
@@ -32,7 +28,7 @@ const TableContent = () => {
         <Table striped bordered hover>
             <thead>
                 <tr>
-                    <th>#</th>
+                    <th>Id</th>
                     <th>Name</th>
                     <th>Age</th>
                     <th>Email</th>
