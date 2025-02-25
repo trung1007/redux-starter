@@ -3,10 +3,11 @@ import Table from 'react-bootstrap/Table';
 import { useAppDispatch, useAppSelector } from '../redux/hooks';
 import { fetchListUsers } from '../redux/user/user.slice';
 import { toast } from "react-toastify";
+import ButtonOption from './button';
 
 
 const TableContent = () => {
-    
+
 
     // const fetchUsers = async () => {
     //     const res = await fetch('http://localhost:3000/users')
@@ -19,37 +20,52 @@ const TableContent = () => {
     // }, [])
     const dispatch = useAppDispatch()
     const users = useAppSelector(state => state?.user?.listUsers)
-    useEffect(()=>{
+    useEffect(() => {
         dispatch(fetchListUsers())
         toast('🦄 fetching success')
-    },[])
+    }, [])
 
 
     return (
-        <Table striped bordered hover>
-            <thead>
-                <tr>
-                    <th>Id</th>
-                    <th>Name</th>
-                    <th>Age</th>
-                    <th>Email</th>
-                </tr>
-            </thead>
-            <tbody>
-                {users?.map((user) => {
-                    return (
-                        <tr key={user.id}>
-                            <td>{user.id}</td>
-                            <td>{user.name}</td>
-                            <td>{user.age}</td>
-                            <td>{user.email}</td>
-                        </tr>
-                    )
-                })}
+        <>
+            <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 20, alignItems:'center' }}>
+                <h1>Table Users</h1>
+                <ButtonOption option={'create'} />
+            </div>
+            <Table striped bordered hover >
+                <thead>
+                    <tr>
+                        <th>Id</th>
+                        <th>Name</th>
+                        <th>Age</th>
+                        <th>Email</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {users?.map((user) => {
+                        return (
+                            <tr key={user.id}>
+                                <td>{user.id}</td>
+                                <td>{user.name}</td>
+                                <td>{user.age}</td>
+                                <td>{user.email}</td>
+                                <td>
+                                    <div style={{display:'flex', justifyContent:'flex-start', gap:16}}>
+                                        <ButtonOption option={'edit'} />
+                                        <ButtonOption option={'delete'} />
+                                    </div>
+
+                                </td>
+                            </tr>
+                        )
+                    })}
 
 
-            </tbody>
-        </Table>
+                </tbody>
+            </Table>
+        </>
+
     )
 }
 
