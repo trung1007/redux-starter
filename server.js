@@ -17,6 +17,18 @@ let users = [
 // GET /users - Lấy danh sách người dùng
 app.get('/users', (req, res) => res.json(users));
 
+// GET /users/:id - Lấy thông tin của một người dùng
+app.get('/users/:id', (req, res) => {
+  const userId = parseInt(req.params.id);
+  const user = users.find(user => user.id === userId);
+
+  if (!user) {
+    return res.status(404).json({ message: 'Không tìm thấy người dùng.' });
+  }
+
+  res.json(user);
+});
+
 // POST /users - Thêm người dùng mới
 app.post('/users', (req, res) => {
   const { name, age, email } = req.body;
