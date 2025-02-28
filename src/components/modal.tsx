@@ -1,14 +1,45 @@
 import { useEffect, useState } from "react";
 import { Button, Form, Modal } from "react-bootstrap";
 import { useForm } from "react-hook-form";
+import { useAppDispatch, useAppSelector } from "../redux/hooks";
+import { createUser, getUserById, IUserPayload } from "../redux/user/user.slice";
+
+interface User {
+  name: string,
+  age: number,
+  email: string
+}
 
 const ModalComponent = ({ option, isShow, onClose, id }: any) => {
-  const { register, handleSubmit, reset, getValues } = useForm();
-
-
+  const { register, handleSubmit, reset, getValues, control, setValue } = useForm();
+  const disabledEdit = option === 'delete'? true : false
 
   const [title, setTitle] = useState("");
   const [action, setAction] = useState("");
+
+  const dispatch = useAppDispatch()
+  const user = useAppSelector((state)=>{state.user.listUsers})
+
+  const getUserById = async (id: any) => {
+    try {
+      const res = await fetch(`http://localhost:3000/users/${id}`)
+      return res.json()
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
+  useEffect(() => {
+    if (id) {
+      getUserById(id).then((user: User) => {
+        setValue('name', user?.name)
+        setValue('age', user?.age)
+        setValue('email', user?.email)
+      })
+
+      // dispatch(getUserById(id))
+    }
+  }, [id])
 
 
 
@@ -32,21 +63,22 @@ const ModalComponent = ({ option, isShow, onClose, id }: any) => {
   }, [option]);
 
   const onSubmit = (data: any) => {
-    console.log("Form Data:", data); // Log dữ liệu form ra console
+    dispatch(createUser(data))
   };
 
   return (
     <Modal show={isShow} onHide={onClose}>
-       <Form onSubmit={handleSubmit(onSubmit)}>
+      <Form onSubmit={handleSubmit(onSubmit)}>
         <Modal.Header closeButton>
           <Modal.Title>{title}</Modal.Title>
         </Modal.Header>
         <Modal.Body>
-          <Form.Group className="mb-3" controlId="name">
+          <Form.Group className="mb-3" controlId="name" >
             <Form.Label>User Name</Form.Label>
             <Form.Control
               type="text"
               placeholder="User Name"
+              disabled={disabledEdit}
               {...register("name")}
             />
           </Form.Group>
@@ -55,6 +87,7 @@ const ModalComponent = ({ option, isShow, onClose, id }: any) => {
             <Form.Control
               type="number"
               placeholder="Age"
+              disabled={disabledEdit}
               {...register("age")}
             />
           </Form.Group>
@@ -63,6 +96,7 @@ const ModalComponent = ({ option, isShow, onClose, id }: any) => {
             <Form.Control
               type="email"
               placeholder="name@example.com"
+              disabled={disabledEdit}
               {...register("email")}
             />
           </Form.Group>

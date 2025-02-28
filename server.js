@@ -1,8 +1,10 @@
 import express from 'express';
+import cors from 'cors'
 
 const app = express();
 const PORT = 3000;
 
+app.use(cors()); 
 // Middleware để parse JSON
 app.use(express.json());
 
@@ -31,16 +33,20 @@ app.get('/users/:id', (req, res) => {
 
 // POST /users - Thêm người dùng mới
 app.post('/users', (req, res) => {
+  console.log(req);
+  
   const { name, age, email } = req.body;
+  const numericAge = Number(age);
 
-  if (!name || !age || !email) {
+
+  if (!name || !numericAge || !email) {
     return res.status(400).json({ message: 'Vui lòng cung cấp đầy đủ tên, tuổi và email.' });
   }
 
   const newUser = {
     id: users.length ? users[users.length - 1].id + 1 : 1,
     name,
-    age,
+    age: numericAge,
     email
   };
 
