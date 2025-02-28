@@ -2,46 +2,37 @@ import { useEffect, useState } from "react";
 import { Button, Form, Modal } from "react-bootstrap";
 import { useForm } from "react-hook-form";
 import { useAppDispatch, useAppSelector } from "../redux/hooks";
-import { createUser, getUserById, IUserPayload } from "../redux/user/user.slice";
+import {
+  createUser,
+  fetchUserById,
+  IUserPayload,
+} from "../redux/user/user.slice";
 
-interface User {
-  name: string,
-  age: number,
-  email: string
-}
 
 const ModalComponent = ({ option, isShow, onClose, id }: any) => {
-  const { register, handleSubmit, reset, getValues, control, setValue } = useForm();
-  const disabledEdit = option === 'delete'? true : false
+  const { register, handleSubmit, reset, getValues, control, setValue } =
+    useForm();
+  const disabledEdit = option === "delete" ? true : false;
 
   const [title, setTitle] = useState("");
   const [action, setAction] = useState("");
 
-  const dispatch = useAppDispatch()
-  const user = useAppSelector((state)=>{state.user.listUsers})
-
-  const getUserById = async (id: any) => {
-    try {
-      const res = await fetch(`http://localhost:3000/users/${id}`)
-      return res.json()
-    } catch (error) {
-      console.log(error);
-    }
-  }
+  const dispatch = useAppDispatch();
+  const user = useAppSelector((state) => state.user.user);
 
   useEffect(() => {
     if (id) {
-      getUserById(id).then((user: User) => {
-        setValue('name', user?.name)
-        setValue('age', user?.age)
-        setValue('email', user?.email)
-      })
-
-      // dispatch(getUserById(id))
+      dispatch(fetchUserById(id));
     }
-  }, [id])
+  }, [id]);
 
-
+  useEffect(()=>{
+    if(user){
+      reset({
+        ...user
+      })
+    }
+  },[user])
 
   useEffect(() => {
     switch (option) {
@@ -63,7 +54,7 @@ const ModalComponent = ({ option, isShow, onClose, id }: any) => {
   }, [option]);
 
   const onSubmit = (data: any) => {
-    dispatch(createUser(data))
+    dispatch(createUser(data));
   };
 
   return (
@@ -73,7 +64,7 @@ const ModalComponent = ({ option, isShow, onClose, id }: any) => {
           <Modal.Title>{title}</Modal.Title>
         </Modal.Header>
         <Modal.Body>
-          <Form.Group className="mb-3" controlId="name" >
+          <Form.Group className="mb-3" controlId="name">
             <Form.Label>User Name</Form.Label>
             <Form.Control
               type="text"
