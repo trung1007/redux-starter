@@ -16,7 +16,7 @@ export interface IUserPayload {
 
 export const fetchListUsers = createAsyncThunk(
   "users/fetchListUsers",
-  async (userId, thunkAPI) => {
+  async () => {
     const res = await fetch("http://localhost:3000/users");
     const data = await res.json();
     return data;
@@ -47,21 +47,33 @@ export const createUser = createAsyncThunk(
       }),
     });
     const data = await res.json();
+    if (data && data?.id) {
+      thunkAPI.dispatch(fetchListUsers());
+    }
     return data;
   }
 );
 
 const initialState: {
   listUsers: IUser[];
-  user?:IUser
+  user?: IUser;
+  isCreateSuccess?: boolean;
+  isLoading?: boolean;
 } = {
   listUsers: [],
+  isCreateSuccess: false,
+  isLoading: false,
 };
 
 export const userSlice = createSlice({
   name: "user",
   initialState,
-  reducers: {},
+  reducers: {
+    resetCreateSuccess: (state) => {
+      state.isCreateSuccess = false; 
+      state.isLoading = false
+    },
+  },
   extraReducers: (builder) => {
     // Add reducers for additional action types here, and handle loading state as needed
     builder.addCase(fetchListUsers.fulfilled, (state, action) => {
@@ -69,11 +81,21 @@ export const userSlice = createSlice({
     });
     builder.addCase(fetchUserById.fulfilled, (state, action) => {
       // state.listUsers = action?.payload;
-      state.user = action.payload
+      state.user = action.payload;
+    });
+    builder.addCase(createUser.pending, (state, action) => {
+      // state.listUsers = action?.payload;
+      state.isLoading = true;
+      state.isCreateSuccess = false
+    });
+    builder.addCase(createUser.fulfilled, (state, action) => {
+      // state.listUsers = action?.payload;
+      state.isLoading = false;
+      state.isCreateSuccess = true;
     });
   },
 });
 
-export const {} = userSlice.actions;
+export const {resetCreateSuccess} = userSlice.actions;
 
 export default userSlice.reducer;

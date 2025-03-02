@@ -5,8 +5,10 @@ import { useAppDispatch, useAppSelector } from "../redux/hooks";
 import {
   createUser,
   fetchUserById,
-  IUserPayload
+  IUserPayload,
+  resetCreateSuccess
 } from "../redux/user/user.slice";
+import { Bounce, toast } from "react-toastify";
 
 
 const ModalComponent = ({ option, isShow, onClose, id }: any) => {
@@ -20,6 +22,9 @@ const ModalComponent = ({ option, isShow, onClose, id }: any) => {
 
   const dispatch = useAppDispatch();
   const user = useAppSelector((state) => state.user.user);
+
+  const isCreateSuccess = useAppSelector((state) => state.user.isCreateSuccess)
+  const isLoading = useAppSelector((state) => state.user.isLoading)
 
   useEffect(() => {
     if (id) {
@@ -63,8 +68,18 @@ const ModalComponent = ({ option, isShow, onClose, id }: any) => {
   }, [option]);
 
   const onSubmit = (data: any) => {
-    dispatch(createUser(data));
+    if (option === 'create') {
+      dispatch(createUser(data))
+    }
   };
+
+  useEffect(() => {
+    if (isCreateSuccess) {
+      handleClose()
+      dispatch(resetCreateSuccess())
+      toast.success('Create successfully');
+    }
+  },[isCreateSuccess])
 
   return (
     <Modal show={isShow} onHide={onClose}>
