@@ -5,7 +5,7 @@ import { useAppDispatch, useAppSelector } from "../redux/hooks";
 import {
   createUser,
   fetchUserById,
-  IUserPayload,
+  IUserPayload
 } from "../redux/user/user.slice";
 
 
@@ -13,6 +13,7 @@ const ModalComponent = ({ option, isShow, onClose, id }: any) => {
   const { register, handleSubmit, reset, getValues, control, setValue } =
     useForm();
   const disabledEdit = option === "delete" ? true : false;
+  const [userById, setUserById] = useState<IUserPayload>({})
 
   const [title, setTitle] = useState("");
   const [action, setAction] = useState("");
@@ -23,16 +24,24 @@ const ModalComponent = ({ option, isShow, onClose, id }: any) => {
   useEffect(() => {
     if (id) {
       dispatch(fetchUserById(id));
+      if (user) {
+        setUserById(user)
+      }
     }
   }, [id]);
 
-  useEffect(()=>{
-    if(user){
+  useEffect(() => {
+    if (userById) {
       reset({
-        ...user
+        ...userById
       })
     }
-  },[user])
+  }, [userById])
+
+  const handleClose = () => {
+    onClose()
+    reset()
+  }
 
   useEffect(() => {
     switch (option) {
@@ -93,7 +102,7 @@ const ModalComponent = ({ option, isShow, onClose, id }: any) => {
           </Form.Group>
         </Modal.Body>
         <Modal.Footer>
-          <Button variant="secondary" onClick={onClose}>
+          <Button variant="secondary" onClick={handleClose}>
             Cancel
           </Button>
           <Button variant="primary" type="submit">

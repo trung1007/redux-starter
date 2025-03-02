@@ -9,9 +9,9 @@ interface IUser {
 }
 
 export interface IUserPayload {
-  name: string;
-  age: number;
-  email: string;
+  name?: string;
+  age?: number;
+  email?: string;
 }
 
 export const fetchListUsers = createAsyncThunk(
