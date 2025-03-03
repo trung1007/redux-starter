@@ -33,8 +33,6 @@ app.get('/users/:id', (req, res) => {
 
 // POST /users - Thêm người dùng mới
 app.post('/users', (req, res) => {
-  console.log(req);
-  
   const { name, age, email } = req.body;
   const numericAge = Number(age);
 

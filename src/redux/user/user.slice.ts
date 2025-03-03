@@ -1,11 +1,11 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import type { PayloadAction } from "@reduxjs/toolkit";
 
-interface IUser {
-  id: number;
-  name: string;
-  age: number;
-  email: string;
+export interface IUser {
+  id?: number;
+  name?: string;
+  age?: number;
+  email?: string;
 }
 
 export interface IUserPayload {
@@ -34,7 +34,7 @@ export const fetchUserById = createAsyncThunk(
 
 export const createUser = createAsyncThunk(
   "users/createUser",
-  async (payload: IUserPayload, thunkAPI) => {
+  async (payload: IUser, thunkAPI) => {
     const res = await fetch("http://localhost:3000/users", {
       method: "POST",
       headers: {
@@ -54,48 +54,149 @@ export const createUser = createAsyncThunk(
   }
 );
 
+export const updateUser = createAsyncThunk(
+  "users/updateUser",
+  async (payload: IUser, thunkAPI) => {
+    const res = await fetch(`http://localhost:3000/users/${payload?.id}`, {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        id:payload?.id,
+        name: payload?.name,
+        age: payload?.age,
+        email: payload?.email,
+      }),
+    });
+    const data = await res.json();
+    if (data && data?.id) {
+      thunkAPI.dispatch(fetchListUsers());
+    }
+    return data;
+  }
+);
+
+export const deleteUser = createAsyncThunk(
+  "users/deleteUser",
+  async (payload: IUser, thunkAPI) => {
+    const res = await fetch(`http://localhost:3000/users/${payload?.id}`, {
+      method: "DELETE",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+    const data = await res.json();
+    thunkAPI.dispatch(fetchListUsers());
+    return data;
+  }
+);
+
+
 const initialState: {
-  listUsers: IUser[];
-  user?: IUser;
-  isCreateSuccess?: boolean;
-  isLoading?: boolean;
+  listUsers: {
+    data?: IUser[];
+    isLoading?: boolean;
+  };
+  user: {
+    data?: IUser;
+    isLoading?: boolean;
+    isUpdate?: boolean;
+    isGetSuccess?: boolean;
+  };
+  createUser: {
+    isCreateSuccess?: boolean;
+    isLoading?: boolean;
+  };
+  updateUser:{
+    isUpdateSuccess?: boolean;
+    isLoading?: boolean;
+  };
+  deleteUser:{
+    isDeleteSuccess?: boolean;
+    isLoading?: boolean;
+  }
+
 } = {
-  listUsers: [],
-  isCreateSuccess: false,
-  isLoading: false,
+  listUsers: {
+    data: [],
+    isLoading: false,
+  },
+  user: {
+    data: {},
+    isLoading: false,
+    isUpdate: false,
+    isGetSuccess: false,
+  },
+  createUser: {
+    isCreateSuccess: false,
+    isLoading: false,
+  },
+  updateUser:{
+    isUpdateSuccess: false,
+    isLoading: false,
+  },
+  deleteUser:{
+    isDeleteSuccess: false,
+    isLoading: false
+  }
 };
 
 export const userSlice = createSlice({
   name: "user",
   initialState,
   reducers: {
+    resetFetchUser: (state) => {
+      (state.user.isLoading = false), (state.user.isGetSuccess = false);
+    },
     resetCreateSuccess: (state) => {
-      state.isCreateSuccess = false; 
-      state.isLoading = false
+      state.createUser.isCreateSuccess = false;
+      state.createUser.isLoading = false;
+    },
+    resetDeleteSuccess: (state) => {
+      state.deleteUser.isDeleteSuccess = false;
+      state.deleteUser.isLoading = false;
     },
   },
   extraReducers: (builder) => {
     // Add reducers for additional action types here, and handle loading state as needed
     builder.addCase(fetchListUsers.fulfilled, (state, action) => {
-      state.listUsers = action?.payload;
+      state.listUsers.data = action?.payload;
+    });
+    builder.addCase(fetchUserById.pending, (state, action) => {
+      (state.user.isLoading = true), (state.user.isGetSuccess = false);
     });
     builder.addCase(fetchUserById.fulfilled, (state, action) => {
-      // state.listUsers = action?.payload;
-      state.user = action.payload;
+      (state.user.isLoading = false), (state.user.isGetSuccess = true);
+      state.user.data = action.payload;
     });
     builder.addCase(createUser.pending, (state, action) => {
-      // state.listUsers = action?.payload;
-      state.isLoading = true;
-      state.isCreateSuccess = false
+      state.createUser.isLoading = true;
+      state.createUser.isCreateSuccess = false;
     });
     builder.addCase(createUser.fulfilled, (state, action) => {
-      // state.listUsers = action?.payload;
-      state.isLoading = false;
-      state.isCreateSuccess = true;
+      state.createUser.isLoading = false;
+      state.createUser.isCreateSuccess = true;
+    });
+    builder.addCase(updateUser.pending, (state, action) => {
+      state.updateUser.isLoading = true;
+      state.updateUser.isUpdateSuccess = false;
+    });
+    builder.addCase(updateUser.fulfilled, (state, action) => {
+      state.updateUser.isLoading = false;
+      state.updateUser.isUpdateSuccess = true;
+    });
+    builder.addCase(deleteUser.pending, (state, action) => {
+      state.deleteUser.isLoading = true;
+      state.deleteUser.isDeleteSuccess = false;
+    });
+    builder.addCase(deleteUser.fulfilled, (state, action) => {
+      state.deleteUser.isLoading = false;
+      state.deleteUser.isDeleteSuccess = true;
     });
   },
 });
 
-export const {resetCreateSuccess} = userSlice.actions;
+export const { resetCreateSuccess, resetFetchUser, resetDeleteSuccess } = userSlice.actions;
 
 export default userSlice.reducer;

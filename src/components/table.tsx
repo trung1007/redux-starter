@@ -16,7 +16,7 @@ const TableContent = () => {
   //     fetchUsers()
   // }, [])
   const dispatch = useAppDispatch();
-  const users = useAppSelector((state) => state?.user?.listUsers);
+  const listUsers = useAppSelector((state) => state?.user?.listUsers?.data);
   useEffect(() => {
     dispatch(fetchListUsers());
     toast("🦄 fetching success");
@@ -46,7 +46,7 @@ const TableContent = () => {
           </tr>
         </thead>
         <tbody>
-          {users?.map((user) => {
+          {listUsers?.map((user) => {
             return (
               <tr key={user.id}>
                 <td>{user?.id}</td>
