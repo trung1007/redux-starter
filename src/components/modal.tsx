@@ -44,6 +44,11 @@ const ModalComponent = ({ option, isShow, onClose, id }: any) => {
     }
   }, [user]);
 
+  const closeModal =()=>{
+    onClose();
+    reset();
+  }
+
   const handleClose = () => {
     onClose();
     reset();
@@ -137,7 +142,7 @@ const ModalComponent = ({ option, isShow, onClose, id }: any) => {
               />
             </Form.Group>
             <Modal.Footer>
-              <Button variant="secondary" onClick={handleClose}>
+              <Button variant="secondary" onClick={closeModal}>
                 Cancel
               </Button>
               <Button variant="primary" type="submit" disabled={isFetchingUser}>
