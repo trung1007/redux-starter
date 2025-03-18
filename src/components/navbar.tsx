@@ -15,12 +15,12 @@ const NavbarHeader = () => {
         dispatch(changeTheme(theme === 'light' ? 'dark' : 'light'))
     }
 
-    useEffect(()=>{
+    useEffect(() => {
         const body = document.querySelector('body')
-        if(body){
+        if (body) {
             body.setAttribute('data-bs-theme', theme)
         }
-    },[theme])
+    }, [theme])
 
     return (
         <Navbar className="bg-body-tertiary" data-bs-theme={theme} >
@@ -30,7 +30,7 @@ const NavbarHeader = () => {
                 <Navbar.Collapse className="justify-content-end">
                     <Form>
                         <Form.Check
-                            value={theme}
+                            defaultChecked={theme === 'light' ? false : true}
                             onClick={handleChangeTheme}
                             type="switch"
                             id="custom-switch"
