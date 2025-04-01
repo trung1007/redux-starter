@@ -3,21 +3,25 @@ import type { PayloadAction } from "@reduxjs/toolkit";
 
 export interface IUser {
   id?: number;
-  name?: string;
+  fullName?: string;
   age?: number;
   email?: string;
+  phoneNumber?:number;
+  address?:string
 }
 
 export interface IUserPayload {
   name?: string;
-  age?: number;
+  fullName?: number;
   email?: string;
+  phoneNumber?:number;
+  address?:string
 }
 
 export const fetchListUsers = createAsyncThunk(
   "users/fetchListUsers",
   async () => {
-    const res = await fetch("http://localhost:3000/users");
+    const res = await fetch("http://localhost:8080/users");
     const data = await res.json();
     return data;
   }
@@ -26,7 +30,7 @@ export const fetchListUsers = createAsyncThunk(
 export const fetchUserById = createAsyncThunk(
   "users/fetchUserById",
   async (userId: any, thunkAPI) => {
-    const res = await fetch(`http://localhost:3000/users/${userId}`);
+    const res = await fetch(`http://localhost:8080/users/${userId}`);
     const data = await res.json();
     return data;
   }
@@ -35,15 +39,17 @@ export const fetchUserById = createAsyncThunk(
 export const createUser = createAsyncThunk(
   "users/createUser",
   async (payload: IUser, thunkAPI) => {
-    const res = await fetch("http://localhost:3000/users", {
+    const res = await fetch("http://localhost:8080/users/save", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        name: payload?.name,
+        fullName: payload?.fullName,
         age: payload?.age,
         email: payload?.email,
+        phoneNumber:payload?.phoneNumber,
+        address: payload?.address
       }),
     });
     const data = await res.json();
@@ -57,16 +63,18 @@ export const createUser = createAsyncThunk(
 export const updateUser = createAsyncThunk(
   "users/updateUser",
   async (payload: IUser, thunkAPI) => {
-    const res = await fetch(`http://localhost:3000/users/${payload?.id}`, {
+    const res = await fetch(`http://localhost:8080/users/save/${payload?.id}`, {
       method: "PUT",
       headers: {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
         id:payload?.id,
-        name: payload?.name,
+        fullName: payload?.fullName,
         age: payload?.age,
         email: payload?.email,
+        phoneNumber:payload?.phoneNumber,
+        address: payload?.address
       }),
     });
     const data = await res.json();
@@ -80,12 +88,15 @@ export const updateUser = createAsyncThunk(
 export const deleteUser = createAsyncThunk(
   "users/deleteUser",
   async (payload: IUser, thunkAPI) => {
-    const res = await fetch(`http://localhost:3000/users/${payload?.id}`, {
+    const res = await fetch(`http://localhost:8080/users/delete/${payload?.id}`, {
       method: "DELETE",
       headers: {
         "Content-Type": "application/json",
       },
     });
+    if (!res.ok) {
+      throw new Error("Failed to delete user");
+    }
     const data = await res.json();
     thunkAPI.dispatch(fetchListUsers());
     return data;

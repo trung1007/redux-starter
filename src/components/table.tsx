@@ -2,25 +2,14 @@ import { useEffect, useState } from "react";
 import Table from "react-bootstrap/Table";
 import { useAppDispatch, useAppSelector } from "../redux/hooks";
 import { fetchListUsers } from "../redux/user/user.slice";
-import { toast } from "react-toastify";
 import ButtonOption from "./button";
 
 const TableContent = () => {
-  // const fetchUsers = async () => {
-  //     const res = await fetch('http://localhost:3000/users')
-  //     const data = await res.json()
-  //     setUsers(data)
-  // }
-
-  // useEffect(() => {
-  //     fetchUsers()
-  // }, [])
   const dispatch = useAppDispatch();
   const listUsers = useAppSelector((state) => state?.user?.listUsers?.data);
   useEffect(() => {
     dispatch(fetchListUsers());
-    toast("🦄 fetching success");
-  }, []);
+  }, [listUsers]);
 
   return (
     <>
@@ -42,6 +31,8 @@ const TableContent = () => {
             <th>Name</th>
             <th>Age</th>
             <th>Email</th>
+            <th>Phone Number</th>
+            <th>Address</th>
             <th>Action</th>
           </tr>
         </thead>
@@ -50,9 +41,11 @@ const TableContent = () => {
             return (
               <tr key={user.id}>
                 <td>{user?.id}</td>
-                <td>{user?.name}</td>
+                <td>{user?.fullName}</td>
                 <td>{user?.age}</td>
                 <td>{user?.email}</td>
+                <td>{user?.phoneNumber}</td>
+                <td>{user?.address}</td>
                 <td>
                   <div
                     style={{

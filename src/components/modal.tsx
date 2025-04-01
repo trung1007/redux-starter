@@ -12,6 +12,7 @@ import {
   resetFetchUser,
   resetDeleteSuccess,
   deleteUser,
+  fetchListUsers,
 } from "../redux/user/user.slice";
 import { Bounce, toast } from "react-toastify";
 
@@ -114,13 +115,13 @@ const ModalComponent = ({ option, isShow, onClose, id }: any) => {
           <Alert variant="danger">{fetchError}</Alert>
         ) : (
           <Form onSubmit={handleSubmit(onSubmit)}>
-            <Form.Group className="mb-3" controlId="name">
+            <Form.Group className="mb-3" controlId="fullName">
               <Form.Label>User Name</Form.Label>
               <Form.Control
                 type="text"
                 placeholder="User Name"
                 disabled={disabledEdit}
-                {...register("name")}
+                {...register("fullName")}
               />
             </Form.Group>
             <Form.Group className="mb-3" controlId="age">
@@ -139,6 +140,24 @@ const ModalComponent = ({ option, isShow, onClose, id }: any) => {
                 placeholder="name@example.com"
                 disabled={disabledEdit}
                 {...register("email")}
+              />
+            </Form.Group>
+            <Form.Group className="mb-3" controlId="phoneNumber">
+              <Form.Label>Phone number</Form.Label>
+              <Form.Control
+                type="number"
+                placeholder="Phone Number"
+                disabled={disabledEdit}
+                {...register("phoneNumber")}
+              />
+            </Form.Group>
+            <Form.Group className="mb-3" controlId="address">
+              <Form.Label>Address</Form.Label>
+              <Form.Control
+                type="text"
+                placeholder="Address"
+                disabled={disabledEdit}
+                {...register("address")}
               />
             </Form.Group>
             <Modal.Footer>
